@@ -1,0 +1,327 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: grafana
+  namespace: grafana
+  labels:
+    dashboards: "grafana"
+spec:
+  config:
+    log:
+      mode: "console"
+    auth:
+      disable_login_form: "false"
+    security:
+      admin_user: root
+      admin_password: secret
+  deployment:
+    spec:
+      template:
+        metadata:
+          annotations:
+            linkerd.io/inject: enabled
+---
+apiVersion: policy.linkerd.io/v1alpha1
+kind: AuthorizationPolicy
+metadata:
+  namespace: linkerd-viz
+  name: grafana
+spec:
+  targetRef:
+    group: policy.linkerd.io
+    kind: Server
+    name: prometheus-admin
+  requiredAuthenticationRefs:
+    - kind: ServiceAccount
+      name: grafana-sa
+      namespace: grafana
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  namespace: grafana
+  name: prometheus
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  datasource:
+    name: prometheus-linkerd
+    type: prometheus
+    access: proxy
+    url: http://prometheus.linkerd-viz.svc.cluster.local:9090
+    isDefault: true
+    jsonData:
+      'tlsSkipVerify': true
+      'timeInterval': "5s"
+    editable: true
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: top-line
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15474
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: health
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15486
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: kubernetes
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15479
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: namespace
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15478
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: deployment
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15475
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: pod
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15477
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: service
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15480
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: route
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15481
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: authority
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15482
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: cronjob
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15483
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: job
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15487
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: daemonset
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15484
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: replicaset
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15491
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: statefulset
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15493
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: replicationcontroller
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15492
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: prometheus
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15489
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: prometheus-benchmark
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15490
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  namespace: grafana
+  name: multicluster
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 15488
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "prometheus-linkerd"

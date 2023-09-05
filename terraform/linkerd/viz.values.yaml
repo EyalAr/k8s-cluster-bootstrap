@@ -1,0 +1,5 @@
+prometheusUrl: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+prometheus:
+  enabled: false
+grafana:
+  url: https://monitoring.${domain}
