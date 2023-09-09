@@ -1,45 +1,36 @@
-# Empty K8S Cluster
+# K8S Cluster Bootstrap
 
-This project sets up a new K8S cluster using Terraform, which includes:
+This repository contains Terraform projects which help setting up and bootstrapping a new K8S cluster with a service mesh, API gateway, monitoring, etc.
+
+## Projects
+
+### [Cluster Bootstrap](./tf-cluster-bootstrap/)
+
+Start here if you already have an empty K8S cluster and a SQL database. Otherwise, see projects below.
+
+This will install the following on any empty K8S cluster:
 
 - Cert-Manager
-    - Public ingress certificates using LetsEncrypt
-    - mTLS and key rotation for Linkerd
 - Linkerd service mesh
-    - Linkerd Viz extension
 - Operator Lifecycle Manager
 - Nginx ingress
 - Prometheus & Grafana
-- Authentication and Authorization (TBD)
+- Ory stack for authentication, authorization and user management
 
-Make sure you have `kubectl`, `terraform` and [`step`](https://smallstep.com/docs/step-cli/reference/) installed, e.g. with:
+### [Oracle Cloud Infrastructure (optional)](./tf-oci-resources/)
 
-```bash
-brew tap hashicorp/tap && brew install kubectl hashicorp/tap/terraform step
-```
+Oracle Cloud offers always-free resources (e.g. compute instances, load balancers, etc.) on which it's possible to run a 4-node cluster with 4 CPUs and 24Gb memory.
 
-`kubectl` should be configured with the context of your cluster.
- 
-Start by creating trust anchor for Linkerd ([reference](https://linkerd.io/2.14/tasks/generate-certificates)):
+This will provision these resources (but not the K8S cluster itself).
 
-```bash
-step certificate create root.linkerd.cluster.local ca.crt ca.key --profile root-ca --no-password --insecure --not-after=87600h
-```
+Once the infrastructure is set up, see below how to deploy a K3S cluster on it.
 
-Terraform expects variables (see `terraform/variables.tf`), which you can set in a `tfvars` file, e.g.:
+### [K3S Cluster on Oracle Cloud Infrastructure (optional)](./tf-oci-k3s-cluster/)
 
-```bash
-cat <<EOT >> terraform/terraform.tfvars
-domains                        = ["example.dev", "example.com"]
-webmaster_email                = "webmaster@example.dev"
-linkerd_trust_anchor_cert_path = "./ca.crt"
-linkerd_trust_anchor_key_path  = "./ca.key"
-grafana_admin_password         = "change_me"
-EOT
-```
+K3S makes it easy to deploy and run a K8S cluster.
 
-Finally, run `terraform apply`:
+Use this project to deploy a cluster on your Oracle Cloud infrastructure which you set up with the project above.
 
-```bash
-cd terraform && terraform apply --var-file=terraform.tfvars
-```
+### Persistance
+
+The Cluster Bootstrap requires a database. Use this project to provision one on Oracle Cloud (always-free tier).

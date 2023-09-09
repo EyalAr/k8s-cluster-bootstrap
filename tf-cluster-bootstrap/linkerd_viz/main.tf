@@ -1,20 +1,14 @@
-variable "domains" {
-  type = list(string)
-}
-
 resource "helm_release" "linkerd_viz" {
   name = "linkerd-viz"
 
   repository = "https://helm.linkerd.io/stable"
   chart      = "linkerd-viz"
 
-  namespace = "linkerd"
+  namespace = var.linkerd_namespace
 
   values = [templatefile("${path.module}/viz.values.yaml", {
-    domain = var.domains[0]
+    grafana_url = var.grafana_url
   })]
-
-  depends_on = [helm_release.linkerd_control_plane]
 }
 
 # the following are commented out because the prometheus operator doesn't support ScrapeConfig with role=Pod

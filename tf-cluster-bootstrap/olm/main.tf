@@ -15,19 +15,19 @@ data "kubectl_file_documents" "olm_doc" {
 }
 
 resource "kubectl_manifest" "crds" {
-  for_each  = data.kubectl_file_documents.crds_doc.manifests
-  yaml_body = each.value
+  for_each          = data.kubectl_file_documents.crds_doc.manifests
+  yaml_body         = each.value
   server_side_apply = true
-  wait = true
-  wait_for_rollout = true
-  force_conflicts = true
+  wait              = true
+  wait_for_rollout  = true
+  force_conflicts   = true
 }
 
 resource "kubectl_manifest" "olm" {
-  for_each  = data.kubectl_file_documents.olm_doc.manifests
-  yaml_body = each.value
+  for_each          = data.kubectl_file_documents.olm_doc.manifests
+  yaml_body         = each.value
   server_side_apply = true
-  wait = true
-  wait_for_rollout = true
-  force_conflicts = true
+  wait              = true
+  wait_for_rollout  = true
+  force_conflicts   = true
 }

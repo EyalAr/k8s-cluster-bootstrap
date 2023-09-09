@@ -7,14 +7,11 @@ variable "webmaster_email" {
 }
 
 variable "linkerd_trust_anchor_cert_path" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "linkerd_trust_anchor_key_path" {
-  type = string
-}
-
-variable "grafana_admin_password" {
+  type      = string
   sensitive = true
-  type = string
 }

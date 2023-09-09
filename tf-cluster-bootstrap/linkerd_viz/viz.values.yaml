@@ -2,4 +2,4 @@ prometheusUrl: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.lo
 prometheus:
   enabled: false
 grafana:
-  url: https://monitoring.${domain}
+  url: ${grafana_url}

@@ -8,4 +8,9 @@ resource "helm_release" "ingress_nginx" {
   create_namespace = true
   wait             = true
   wait_for_jobs    = true
+
+  set {
+    name  = "controller.podAnnotations.linkerd\\.io/inject"
+    value = "enabled"
+  }
 }

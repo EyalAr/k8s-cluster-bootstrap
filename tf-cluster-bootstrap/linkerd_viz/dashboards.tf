@@ -4,14 +4,12 @@ resource "kubernetes_manifest" "grafana_linkerd_dashboard" {
     apiVersion = "grafana.integreatly.org/v1beta1"
     kind       = "GrafanaDashboard"
     metadata = {
-      namespace = "monitoring"
+      namespace = var.monitoring_namespace
       name      = "linkerd-${each.value}"
     }
     spec = {
       instanceSelector = {
-        matchLabels = {
-          dashboards = "grafana"
-        }
+        matchLabels = var.grafana_labels
       }
       grafanaCom = {
         id = each.value
