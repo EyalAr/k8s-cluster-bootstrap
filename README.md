@@ -21,7 +21,7 @@ This will install the following on any empty K8S cluster:
 
 Oracle Cloud offers always-free resources (e.g. compute instances, load balancers, etc.) on which it's possible to run a 4-node cluster with 4 CPUs and 24Gb memory.
 
-This will provision these resources (but not the K8S cluster itself).
+This will provision these resources, including a SQL database, but not the K8S cluster itself.
 
 Once the infrastructure is set up, see below how to deploy a K3S cluster on it.
 
@@ -30,7 +30,3 @@ Once the infrastructure is set up, see below how to deploy a K3S cluster on it.
 K3S makes it easy to deploy and run a K8S cluster.
 
 Use this project to deploy a cluster on your Oracle Cloud infrastructure which you set up with the project above.
-
-### Persistance
-
-The Cluster Bootstrap requires a database. Use this project to provision one on Oracle Cloud (always-free tier).
