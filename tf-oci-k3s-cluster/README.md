@@ -9,3 +9,7 @@ Network components:
 Compute components:
 
 - 4 compute instances
+
+Once `terraform apply` finishes, you may want to note down the following outputs:
+
+1. `db_admin_password`

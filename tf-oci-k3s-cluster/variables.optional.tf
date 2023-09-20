@@ -8,16 +8,6 @@ variable "vcn_cidr_block" {
   default = "10.0.0.0/16"
 }
 
-variable "server_count" {
-  type    = number
-  default = 2
-}
-
-variable "agent_count" {
-  type    = number
-  default = 2
-}
-
 variable "subnet_cidr_block_private" {
   type    = string
   default = "10.0.0.0/24"
@@ -50,7 +40,7 @@ variable "node_cpus" {
 
 variable "node_image_id" {
   type = string
-  default = "ocid1.image.oc1.uk-london-1.aaaaaaaapqvy5cln3muczrzgic2uwcy4u7bgu6hlhmx5pd363gyvesptm63a" # Canonical Ubuntu 22.04 Minimal aarch64
+  default = "ocid1.image.oc1.uk-london-1.aaaaaaaahk5z5fbnj4mg3rq2omqsth6oewcaabb3h7uojwc4zmsfyqbqedhq" # Canonical-Ubuntu-20.04-aarch64-2023.08.27-0
 }
 
 variable "node_instance_ssh_public_key_path" {

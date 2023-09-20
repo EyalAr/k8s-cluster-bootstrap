@@ -21,5 +21,10 @@ terraform {
       source  = "oracle/oci"
       version = "5.12.0"
     }
+
+    cloudinit = {
+      source  = "hashicorp/cloudinit"
+      version = "2.3.2"
+    }
   }
 }

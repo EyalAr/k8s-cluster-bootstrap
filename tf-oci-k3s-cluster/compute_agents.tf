@@ -2,7 +2,7 @@ resource "oci_core_instance_pool" "agents" {
   display_name              = "k3s-agents"
   compartment_id            = oci_identity_compartment.compartment.id
   instance_configuration_id = oci_core_instance_configuration.agent_instance_config.id
-  size                      = var.agent_count
+  size                      = 3
 
   placement_configurations {
     availability_domain = var.availability_domain
@@ -18,8 +18,21 @@ data "oci_core_instance_pool_instances" "agents" {
 }
 
 data "oci_core_instance" "agents" {
-  count = var.server_count
+  count       = 3
   instance_id = data.oci_core_instance_pool_instances.agents.instances[count.index].id
+}
+
+data "cloudinit_config" "agent" {
+  gzip          = false
+  base64_encode = true
+
+  part {
+    content_type = "text/x-shellscript"
+    content = templatefile("${path.module}/cloud-init-templates/agent/boot.sh", {
+      token     = random_password.cluster_token.result
+      server_ip = data.oci_core_instance.server.private_ip
+    })
+  }
 }
 
 resource "oci_core_instance_configuration" "agent_instance_config" {
@@ -69,6 +82,7 @@ resource "oci_core_instance_configuration" "agent_instance_config" {
 
       metadata = {
         ssh_authorized_keys = file(var.node_instance_ssh_public_key_path)
+        user_data           = data.cloudinit_config.agent.rendered
       }
     }
   }

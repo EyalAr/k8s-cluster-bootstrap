@@ -2,7 +2,7 @@ resource "oci_core_instance_pool" "servers" {
   display_name              = "k3s-servers"
   compartment_id            = oci_identity_compartment.compartment.id
   instance_configuration_id = oci_core_instance_configuration.server_instance_config.id
-  size                      = var.server_count
+  size                      = 1
 
   placement_configurations {
     availability_domain = var.availability_domain
@@ -17,9 +17,26 @@ data "oci_core_instance_pool_instances" "servers" {
   instance_pool_id = oci_core_instance_pool.servers.id
 }
 
-data "oci_core_instance" "servers" {
-  count = var.server_count
-  instance_id = data.oci_core_instance_pool_instances.servers.instances[count.index].id
+data "oci_core_instance" "server" {
+  instance_id = data.oci_core_instance_pool_instances.servers.instances[0].id
+}
+
+resource "random_password" "cluster_token" {
+  length = 16
+}
+
+data "cloudinit_config" "server" {
+  gzip          = false
+  base64_encode = true
+
+  part {
+    content_type = "text/x-shellscript"
+    content = templatefile("${path.module}/cloud-init-templates/server/boot.sh", {
+      token  = random_password.cluster_token.result,
+      domain = var.domain
+      # tls_sans = [for a in oci_network_load_balancer_network_load_balancer.public_nlb.ip_addresses: a.ip_address]
+    })
+  }
 }
 
 resource "oci_core_instance_configuration" "server_instance_config" {
@@ -69,6 +86,7 @@ resource "oci_core_instance_configuration" "server_instance_config" {
 
       metadata = {
         ssh_authorized_keys = file(var.node_instance_ssh_public_key_path)
+        user_data           = data.cloudinit_config.server.rendered
       }
     }
   }

@@ -6,7 +6,7 @@ This repository contains Terraform projects which help setting up and bootstrapp
 
 ### [Cluster Bootstrap](./tf-cluster-bootstrap/)
 
-Start here if you already have an empty K8S cluster and a SQL database. Otherwise, see projects below.
+Start here if you already have an empty K8S cluster and a SQL database. Otherwise see below.
 
 This will install the following on any empty K8S cluster:
 
@@ -17,16 +17,10 @@ This will install the following on any empty K8S cluster:
 - Prometheus & Grafana
 - Ory stack for authentication, authorization and user management
 
-### [Oracle Cloud Infrastructure (optional)](./tf-oci-resources/)
+### [Oracle Cloud Infrastructure and a K3S cluster setup (optional)](./tf-oci-k3s-cluster/)
 
 Oracle Cloud offers always-free resources (e.g. compute instances, load balancers, etc.) on which it's possible to run a 4-node cluster with 4 CPUs and 24Gb memory.
 
-This will provision these resources, including a SQL database, but not the K8S cluster itself.
+This will provision these resources, including a SQL database, and install a K3S cluster.
 
-Once the infrastructure is set up, see below how to deploy a K3S cluster on it.
-
-### [K3S Cluster on Oracle Cloud Infrastructure (optional)](./tf-oci-k3s-cluster/)
-
-K3S makes it easy to deploy and run a K8S cluster.
-
-Use this project to deploy a cluster on your Oracle Cloud infrastructure which you set up with the project above.
+See project directory for instructions.

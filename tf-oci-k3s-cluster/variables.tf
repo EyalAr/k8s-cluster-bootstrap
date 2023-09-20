@@ -19,3 +19,7 @@ variable "compartment_name" {
 variable "compartment_description" {
   type = string
 }
+
+variable "domain" {
+  type = string
+}

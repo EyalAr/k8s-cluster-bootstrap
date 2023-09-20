@@ -1,6 +1,7 @@
 # set up public access into the cluster with a network load balancer
 
 resource "oci_network_load_balancer_network_load_balancer" "public_nlb" {
+  depends_on                     = [data.oci_core_instance.server, data.oci_core_instance.agents]
   compartment_id                 = oci_identity_compartment.compartment.id
   display_name                   = "public-nlb"
   subnet_id                      = oci_core_subnet.subnet_public.id
@@ -32,17 +33,15 @@ resource "oci_network_load_balancer_backend_set" "public_nlb_http_backend_set" {
   }
 }
 
-resource "oci_network_load_balancer_backend" "public_nlb_http_backend_servers" {
-  count = var.server_count
-
+resource "oci_network_load_balancer_backend" "public_nlb_http_backend_server" {
   backend_set_name         = oci_network_load_balancer_backend_set.public_nlb_http_backend_set.name
   network_load_balancer_id = oci_network_load_balancer_network_load_balancer.public_nlb.id
-  target_id                = data.oci_core_instance.servers[count.index].id
+  target_id                = data.oci_core_instance.server.id
   port                     = 80
 }
 
 resource "oci_network_load_balancer_backend" "public_nlb_http_backend_agents" {
-  count = var.agent_count
+  count = 3
 
   backend_set_name         = oci_network_load_balancer_backend_set.public_nlb_http_backend_set.name
   network_load_balancer_id = oci_network_load_balancer_network_load_balancer.public_nlb.id
@@ -73,17 +72,15 @@ resource "oci_network_load_balancer_backend_set" "public_nlb_https_backend_set" 
   }
 }
 
-resource "oci_network_load_balancer_backend" "public_nlb_https_backend_servers" {
-  count = var.server_count
-
+resource "oci_network_load_balancer_backend" "public_nlb_https_backend_server" {
   backend_set_name         = oci_network_load_balancer_backend_set.public_nlb_https_backend_set.name
   network_load_balancer_id = oci_network_load_balancer_network_load_balancer.public_nlb.id
-  target_id                = data.oci_core_instance.servers[count.index].id
+  target_id                = data.oci_core_instance.server.id
   port                     = 443
 }
 
 resource "oci_network_load_balancer_backend" "public_nlb_https_backend_agents" {
-  count = var.agent_count
+  count = 3
 
   backend_set_name         = oci_network_load_balancer_backend_set.public_nlb_https_backend_set.name
   network_load_balancer_id = oci_network_load_balancer_network_load_balancer.public_nlb.id
@@ -114,11 +111,9 @@ resource "oci_network_load_balancer_backend_set" "public_nlb_kubeapi_backend_set
   }
 }
 
-resource "oci_network_load_balancer_backend" "public_nlb_kubeapi_backend_servers" {
-  count = var.server_count
-
+resource "oci_network_load_balancer_backend" "public_nlb_kubeapi_backend_server" {
   backend_set_name         = oci_network_load_balancer_backend_set.public_nlb_kubeapi_backend_set.name
   network_load_balancer_id = oci_network_load_balancer_network_load_balancer.public_nlb.id
-  target_id                = data.oci_core_instance.servers[count.index].id
+  target_id                = data.oci_core_instance.server.id
   port                     = 6443
 }
