@@ -28,7 +28,7 @@ data "cloudinit_config" "agent" {
 
   part {
     content_type = "text/x-shellscript"
-    content = templatefile("${path.module}/cloud-init-templates/agent/boot.sh", {
+    content = templatefile("${path.module}/scripts/agent_boot.sh", {
       token     = random_password.cluster_token.result
       server_ip = data.oci_core_instance.server.private_ip
     })

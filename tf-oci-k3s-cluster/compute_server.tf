@@ -31,10 +31,9 @@ data "cloudinit_config" "server" {
 
   part {
     content_type = "text/x-shellscript"
-    content = templatefile("${path.module}/cloud-init-templates/server/boot.sh", {
+    content = templatefile("${path.module}/scripts/server_boot.sh", {
       token  = random_password.cluster_token.result,
       domain = var.domain
-      # tls_sans = [for a in oci_network_load_balancer_network_load_balancer.public_nlb.ip_addresses: a.ip_address]
     })
   }
 }

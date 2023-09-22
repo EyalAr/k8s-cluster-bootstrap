@@ -18,6 +18,11 @@ variable "subnet_cidr_block_public" {
   default = "10.0.1.0/24"
 }
 
+variable "region_id" {
+  type    = string
+  default = "uk-london-1"
+}
+
 variable "availability_domain" {
   type    = string
   default = "haON:UK-LONDON-1-AD-1"

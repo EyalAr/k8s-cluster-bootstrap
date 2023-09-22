@@ -7,12 +7,13 @@ resource "oci_core_vcn" "vcn" {
   display_name   = var.vcn_display_name
 }
 
-# This will provide the VCN with internet access
+# This will provide the private subnet with internet access
 resource "oci_core_nat_gateway" "nat" {
   compartment_id = oci_identity_compartment.compartment.id
   vcn_id         = oci_core_vcn.vcn.id
 }
 
+# This will provide the public subnet with internet access
 resource "oci_core_internet_gateway" "ig" {
   compartment_id = oci_identity_compartment.compartment.id
   vcn_id         = oci_core_vcn.vcn.id
@@ -54,6 +55,7 @@ resource "oci_core_subnet" "subnet_private" {
   ]
 }
 
+# network load balancer needs to be on a public subnet in order to get a public ip
 resource "oci_core_subnet" "subnet_public" {
   cidr_block                 = var.subnet_cidr_block_public
   vcn_id                     = oci_core_vcn.vcn.id
