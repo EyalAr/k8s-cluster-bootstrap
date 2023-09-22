@@ -63,9 +63,11 @@ module "linkerd_viz" {
   monitoring_namespace = module.kube_prometheus_stack.monitoring_namespace
   grafana_url          = module.kube_prometheus_stack.grafana_url
   grafana_labels       = module.kube_prometheus_stack.grafana_labels
+  domain               = var.domains[0]
 
   providers = {
     kubernetes = kubernetes,
     helm       = helm
+    htpasswd   = htpasswd
   }
 }

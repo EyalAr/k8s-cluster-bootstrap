@@ -11,6 +11,84 @@ resource "helm_release" "linkerd_viz" {
   })]
 }
 
+resource "random_password" "linkerd_viz_password" {
+  length  = 32
+}
+
+resource "random_password" "linkerd_viz_password_salt" {
+  length = 8
+}
+
+resource "htpasswd_password" "linkerd_viz_password_hash" {
+  password = random_password.linkerd_viz_password.result
+  salt     = random_password.linkerd_viz_password_salt.result
+}
+
+resource "kubernetes_secret_v1" "linkerd_viz_auth" {
+  metadata {
+    name      = "linkerd-viz-auth"
+    namespace = var.linkerd_namespace
+  }
+
+  data = {
+    auth = "admin:${htpasswd_password.linkerd_viz_password_hash.bcrypt}"
+  }
+
+  type = "Opaque"
+}
+
+resource "kubernetes_ingress_v1" "linkerd_viz_web" {
+  metadata {
+    name      = "linkerd-viz-web"
+    namespace = var.linkerd_namespace
+    annotations = {
+      "cert-manager.io/cluster-issuer"                    = "letsencrypt"
+      "nginx.ingress.kubernetes.io/auth-type"             = "basic"
+      "nginx.ingress.kubernetes.io/auth-secret"           = "linkerd-viz-auth"
+      "nginx.ingress.kubernetes.io/auth-realm"            = "Authentication Required - admin"
+      "nginx.ingress.kubernetes.io/service-upstream"      = "true"
+      "nginx.ingress.kubernetes.io/upstream-vhost"        = "web.linkerd.svc.cluster.local:8084"
+      "nginx.ingress.kubernetes.io/use-regex"             = "true"
+      "nginx.ingress.kubernetes.io/rewrite-target"        = "/$2"
+      "nginx.ingress.kubernetes.io/configuration-snippet" = <<EOF
+        sub_filter_once off;
+        sub_filter '<head>' '<head> <base href="linkerd/">';
+        sub_filter 'src="/' 'src="/linkerd/';
+        sub_filter 'href="/' 'href="/linkerd/';
+        sub_filter '/\/api\/v1\/namespaces\/.*\/proxy/g' '/\/linkerd/g';
+        sub_filter_types text/html text/css text/javascript;
+        proxy_set_header Origin "";
+      EOF
+    }
+  }
+  spec {
+    ingress_class_name = "nginx"
+    tls {
+      hosts = [
+        "monitoring.${var.domain}"
+      ]
+      secret_name = "monitoring-tls"
+    }
+    rule {
+      host = "monitoring.${var.domain}"
+      http {
+        path {
+          path      = "/linkerd(/|$)(.*)"
+          path_type = "ImplementationSpecific"
+          backend {
+            service {
+              name = "web"
+              port {
+                number = 8084
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 # the following are commented out because the prometheus operator doesn't support ScrapeConfig with role=Pod
 # instead, we define them in the prometheus operator's values.yaml
 

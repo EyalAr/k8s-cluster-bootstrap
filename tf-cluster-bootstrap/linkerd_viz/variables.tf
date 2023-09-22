@@ -13,3 +13,7 @@ variable "grafana_url" {
 variable "grafana_labels" {
   type = map(string)
 }
+
+variable "domain" {
+  type = string
+}

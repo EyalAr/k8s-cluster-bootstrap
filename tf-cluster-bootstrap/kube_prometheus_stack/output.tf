@@ -9,3 +9,8 @@ output "grafana_url" {
 output "grafana_labels" {
   value = local.grafana_labels
 }
+
+output "grafana_password" {
+  value     = random_password.grafana_admin_password.result
+  sensitive = true
+}

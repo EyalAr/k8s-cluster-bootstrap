@@ -10,5 +10,9 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "2.23.0"
     }
+    htpasswd = {
+      source  = "loafoe/htpasswd"
+      version = "1.0.4"
+    }
   }
 }
