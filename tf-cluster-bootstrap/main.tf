@@ -83,3 +83,12 @@ module "longhorn_storage" {
     htpasswd   = htpasswd
   }
 }
+
+module "postgres" {
+  source = "./postgres"
+
+  providers = {
+    kubernetes = kubernetes,
+    helm       = helm
+  }
+}
