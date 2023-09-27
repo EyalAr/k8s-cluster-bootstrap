@@ -71,3 +71,15 @@ module "linkerd_viz" {
     htpasswd   = htpasswd
   }
 }
+
+module "longhorn_storage" {
+  source = "./longhorn_storage"
+
+  domain = var.domains[0]
+
+  providers = {
+    kubernetes = kubernetes,
+    helm       = helm
+    htpasswd   = htpasswd
+  }
+}
